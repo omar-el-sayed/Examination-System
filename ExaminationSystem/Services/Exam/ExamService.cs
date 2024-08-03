@@ -1,4 +1,5 @@
-﻿using ExaminationSystem.Helpers;
+﻿using ExaminationSystem.DTOs.Exam;
+using ExaminationSystem.Helpers;
 using ExaminationSystem.Models;
 using ExaminationSystem.Repositories;
 using ExaminationSystem.Services.ExamQuestions;
@@ -33,7 +34,7 @@ namespace ExaminationSystem.Services.Exams
             return exam is not null ? exam.ToViewModel() : new ExamVM();
         }
 
-        public bool Add(CreateExamVM viewModel)
+        public bool Add(CreateExamDto examDto)
         {
             var exam = _repository.Add(viewModel.ToModel());
             _repository.SaveChanges();

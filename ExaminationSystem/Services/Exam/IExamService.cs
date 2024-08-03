@@ -1,4 +1,5 @@
-﻿using ExaminationSystem.ViewModels.Exam;
+﻿using ExaminationSystem.DTOs.Exam;
+using ExaminationSystem.ViewModels.Exam;
 
 namespace ExaminationSystem.Services.Exams
 {
@@ -6,8 +7,8 @@ namespace ExaminationSystem.Services.Exams
     {
         IEnumerable<ExamVM> GetAll();
         ExamVM GetById(int id);
-        bool Add(CreateExamVM viewModel);
-        bool Update(int id, CreateExamVM viewModel);
+        bool Add(CreateExamDto examDto);
+        bool Update(int id, CreateExamDto examDto);
         bool Delete(int id);
         int Min();
         int Max();
