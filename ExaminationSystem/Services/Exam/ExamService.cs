@@ -1,5 +1,4 @@
 ﻿using ExaminationSystem.DTOs.Exam;
-using ExaminationSystem.Helpers;
 using ExaminationSystem.Models;
 using ExaminationSystem.Repositories;
 using ExaminationSystem.Services.ExamQuestions;
@@ -54,7 +53,7 @@ namespace ExaminationSystem.Services.Exams
             return true;
         }
 
-        public bool Update(int id, CreateExamVM viewModel)
+        public bool Update(int id, CreateExamDto viewModel)
         {
             var exam = _repository.GetByIdWithTracking(id);
 

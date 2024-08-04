@@ -1,6 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ExaminationSystem;
+using ExaminationSystem.Helpers.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,8 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 // Register services using Autofac.
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterModule(new AutofacModule()));
+
+builder.Services.AddAutoMapper(typeof(ExamProfile));
 
 var app = builder.Build();
 

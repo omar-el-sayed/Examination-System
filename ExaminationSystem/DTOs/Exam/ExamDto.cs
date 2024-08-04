@@ -1,6 +1,6 @@
-﻿namespace ExaminationSystem.ViewModels.Exam
+﻿namespace ExaminationSystem.DTOs.Exam
 {
-    public class ExamVM
+    public class ExamDto
     {
         public DateTime StartDate { get; set; }
         public int TotalGrade { get; set; }
