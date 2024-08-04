@@ -1,9 +1,9 @@
-﻿using ExaminationSystem.DTOs.Exam;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using ExaminationSystem.DTOs.Exam;
 using ExaminationSystem.Models;
 using ExaminationSystem.Repositories;
 using ExaminationSystem.Services.ExamQuestions;
-using ExaminationSystem.ViewModels.Exam;
-using ExaminationSystem.ViewModels.ExamQuestion;
 
 namespace ExaminationSystem.Services.Exams
 {
@@ -12,62 +12,69 @@ namespace ExaminationSystem.Services.Exams
         #region Fields
         private readonly IGenericRepository<Exam> _repository;
         private readonly IExamQuestionService _examQuestionService;
+        private readonly IMapper _mapper;
         #endregion
 
         #region Constructor
-        public ExamService(IGenericRepository<Exam> repository, IExamQuestionService examQuestionService)
+        public ExamService(IGenericRepository<Exam> repository, IExamQuestionService examQuestionService, IMapper mapper)
         {
             _repository = repository;
             _examQuestionService = examQuestionService;
+            _mapper = mapper;
         }
         #endregion
 
         #region Actions
-        public IEnumerable<ExamVM> GetAll()
-            => _repository.GetAll().ToViewModel();
-
-        public ExamVM GetById(int id)
+        public IEnumerable<ExamDto> GetAll()
         {
-            var exam = _repository.GetById(id);
+            var exams = _repository.GetAll();
 
-            return exam is not null ? exam.ToViewModel() : new ExamVM();
+            var x = exams.ProjectTo<ExamDto>(_mapper.ConfigurationProvider).ToList();
+            return x;
         }
 
-        public bool Add(CreateExamDto examDto)
-        {
-            var exam = _repository.Add(viewModel.ToModel());
-            _repository.SaveChanges();
+        //public ExamDto GetById(int id)
+        //{
+        //    var exam = _repository.GetById(id);
 
-            var examQuestions = new List<CreateExamQuestionVM>();
+        //    return exam is not null ? exam.ToViewModel() : new ExamVM();
+        //}
 
-            foreach (var qId in viewModel.QuestionIds)
-            {
-                examQuestions.Add(new CreateExamQuestionVM
-                {
-                    ExamId = exam.Id,
-                    QuestionId = qId
-                });
-            }
+        //public bool Add(CreateExamDto examDto)
+        //{
+        //    var exam = _repository.Add(viewModel.ToModel());
+        //    _repository.SaveChanges();
 
-            _examQuestionService.AddRange(examQuestions);
-            return true;
-        }
+        //    var examQuestions = new List<CreateExamQuestionVM>();
 
-        public bool Update(int id, CreateExamDto viewModel)
-        {
-            var exam = _repository.GetByIdWithTracking(id);
+        //    foreach (var qId in viewModel.QuestionIds)
+        //    {
+        //        examQuestions.Add(new CreateExamQuestionVM
+        //        {
+        //            ExamId = exam.Id,
+        //            QuestionId = qId
+        //        });
+        //    }
 
-            if (exam is null)
-                return false;
+        //    _examQuestionService.AddRange(examQuestions);
+        //    return true;
+        //}
 
-            exam.StartDate = viewModel.StartDate;
-            exam.TotalGrade = viewModel.TotalGrade;
+        //public bool Update(UpdateExamDto examDto)
+        //{
+        //    var exam = _repository.GetByIdWithTracking(examDto.Id);
 
-            _repository.Update(exam);
-            _repository.SaveChanges();
+        //    if (exam is null)
+        //        return false;
 
-            return true;
-        }
+        //    exam.StartDate = viewModel.StartDate;
+        //    exam.TotalGrade = viewModel.TotalGrade;
+
+        //    _repository.Update(exam);
+        //    _repository.SaveChanges();
+
+        //    return true;
+        //}
 
         public bool Delete(int id)
         {
