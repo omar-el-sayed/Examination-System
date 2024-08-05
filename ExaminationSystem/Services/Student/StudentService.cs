@@ -1,32 +1,25 @@
-﻿using ExaminationSystem.Helpers;
+﻿using ExaminationSystem.DTOs.Student;
+using ExaminationSystem.Helpers;
 using ExaminationSystem.Models;
 using ExaminationSystem.Repositories;
-using ExaminationSystem.ViewModels.Student;
 
 namespace ExaminationSystem.Services.Students
 {
-    public class StudentService : IStudentService
+    public class StudentService(IGenericRepository<Student> _repository) : IStudentService
     {
-        private readonly IGenericRepository<Student> _repository;
+        public IEnumerable<StudentDto> GetAll()
+           => _repository.GetAll().Map<StudentDto>();
 
-        public StudentService(IGenericRepository<Student> repository)
-        {
-            _repository = repository;
-        }
-
-        public IEnumerable<StudentVM> GetAll()
-           => _repository.GetAll().ToViewModel();
-
-        public StudentVM GetById(int id)
+        public StudentDto GetById(int id)
         {
             var student = _repository.GetById(id);
 
-            return student is not null ? student.ToViewModel() : new StudentVM();
+            return student is not null ? student.Map<StudentDto>() : new StudentDto();
         }
 
-        public bool Add(CreateStudentVM viewModel)
+        public bool Add(CreateStudentDto studentDto)
         {
-            var student = viewModel.ToModel();
+            var student = studentDto.Map<Student>();
 
             _repository.Add(student);
             _repository.SaveChanges();
@@ -34,15 +27,15 @@ namespace ExaminationSystem.Services.Students
             return true;
         }
 
-        public bool Update(int id, CreateStudentVM viewModel)
+        public bool Update(UpdateStudentDto studentDto)
         {
-            var student = _repository.GetByIdWithTracking(id);
+            var student = _repository.GetByIdWithTracking(studentDto.Id);
 
             if (student is null)
                 return false;
 
-            student.FirstName = viewModel.FirstName;
-            student.LastName = viewModel.LastName;
+            student.FirstName = studentDto.FirstName;
+            student.LastName = studentDto.LastName;
 
             _repository.Update(student);
             _repository.SaveChanges();
