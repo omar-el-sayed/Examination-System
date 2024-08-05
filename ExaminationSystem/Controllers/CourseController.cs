@@ -1,49 +1,44 @@
-﻿using ExaminationSystem.Services.Courses;
+﻿using ExaminationSystem.DTOs.Course;
+using ExaminationSystem.Helpers;
+using ExaminationSystem.Services.Courses;
 using ExaminationSystem.ViewModels.Course;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminationSystem.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class CourseController : ControllerBase
+    public class CourseController(ICourseService _service) : ControllerBase
     {
-        private readonly ICourseService _service;
-
-        public CourseController(ICourseService service)
-        {
-            _service = service;
-        }
-
-        [HttpGet]
+        [HttpGet("getall")]
         public IEnumerable<CourseVM> GetAll()
-            => _service.GetAll();
+            => _service.GetAll().AsQueryable().Map<CourseVM>();
 
-        [HttpGet("{id}")]
+        [HttpGet("getbyid/{id}")]
         public CourseVM GetById(int id)
-            => _service.GetById(id);
+            => _service.GetById(id).Map<CourseVM>();
 
-        [HttpPost]
-        public bool Add(CourseVM viewModel)
-            => _service.Add(viewModel);
+        [HttpPost("add")]
+        public bool Add(CreateCourseVM viewModel)
+            => _service.Add(viewModel.Map<CreateCourseDto>());
 
-        [HttpPut("{id}")]
-        public bool Update(int id, CourseVM viewModel)
-            => _service.Update(id, viewModel);
+        [HttpPut("update")]
+        public bool Update(UpdateCourseVM viewModel)
+            => _service.Update(viewModel.Map<UpdateCourseDto>());
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete")]
         public bool Delete(int id)
             => _service.Delete(id);
 
-        [HttpGet]
+        [HttpGet("min")]
         public int MinHours()
             => _service.Min();
 
-        [HttpGet]
+        [HttpGet("max")]
         public int MaxHours()
             => _service.Max();
 
-        [HttpGet]
+        [HttpGet("count")]
         public int Count()
             => _service.Count();
     }

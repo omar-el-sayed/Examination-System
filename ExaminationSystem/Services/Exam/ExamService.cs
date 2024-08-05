@@ -1,6 +1,5 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using ExaminationSystem.DTOs.Exam;
+﻿using ExaminationSystem.DTOs.Exam;
+using ExaminationSystem.Helpers;
 using ExaminationSystem.Models;
 using ExaminationSystem.Repositories;
 using ExaminationSystem.Services.ExamQuestions;
@@ -12,91 +11,89 @@ namespace ExaminationSystem.Services.Exams
         #region Fields
         private readonly IGenericRepository<Exam> _repository;
         private readonly IExamQuestionService _examQuestionService;
-        private readonly IMapper _mapper;
         #endregion
 
         #region Constructor
-        public ExamService(IGenericRepository<Exam> repository, IExamQuestionService examQuestionService, IMapper mapper)
+        public ExamService(IGenericRepository<Exam> repository, IExamQuestionService examQuestionService)
         {
             _repository = repository;
             _examQuestionService = examQuestionService;
-            _mapper = mapper;
         }
         #endregion
 
         #region Actions
         public IEnumerable<ExamDto> GetAll()
+            => _repository.GetAll().Map<ExamDto>();
         {
             var exams = _repository.GetAll();
 
-            var x = exams.ProjectTo<ExamDto>(_mapper.ConfigurationProvider).ToList();
-            return x;
+            return exams.Map<ExamDto>();
         }
 
-        //public ExamDto GetById(int id)
-        //{
-        //    var exam = _repository.GetById(id);
+    //public ExamDto GetById(int id)
+    //{
+    //    var exam = _repository.GetById(id);
 
-        //    return exam is not null ? exam.ToViewModel() : new ExamVM();
-        //}
+    //    return exam is not null ? exam.ToViewModel() : new ExamVM();
+    //}
 
-        //public bool Add(CreateExamDto examDto)
-        //{
-        //    var exam = _repository.Add(viewModel.ToModel());
-        //    _repository.SaveChanges();
+    //public bool Add(CreateExamDto examDto)
+    //{
+    //    var exam = _repository.Add(viewModel.ToModel());
+    //    _repository.SaveChanges();
 
-        //    var examQuestions = new List<CreateExamQuestionVM>();
+    //    var examQuestions = new List<CreateExamQuestionVM>();
 
-        //    foreach (var qId in viewModel.QuestionIds)
-        //    {
-        //        examQuestions.Add(new CreateExamQuestionVM
-        //        {
-        //            ExamId = exam.Id,
-        //            QuestionId = qId
-        //        });
-        //    }
+    //    foreach (var qId in viewModel.QuestionIds)
+    //    {
+    //        examQuestions.Add(new CreateExamQuestionVM
+    //        {
+    //            ExamId = exam.Id,
+    //            QuestionId = qId
+    //        });
+    //    }
 
-        //    _examQuestionService.AddRange(examQuestions);
-        //    return true;
-        //}
+    //    _examQuestionService.AddRange(examQuestions);
+    //    return true;
+    //}
 
-        //public bool Update(UpdateExamDto examDto)
-        //{
-        //    var exam = _repository.GetByIdWithTracking(examDto.Id);
+    //public bool Update(UpdateExamDto examDto)
+    //{
+    //    var exam = _repository.GetByIdWithTracking(examDto.Id);
 
-        //    if (exam is null)
-        //        return false;
+    //    if (exam is null)
+    //        return false;
 
-        //    exam.StartDate = viewModel.StartDate;
-        //    exam.TotalGrade = viewModel.TotalGrade;
+    //    exam.StartDate = viewModel.StartDate;
+    //    exam.TotalGrade = viewModel.TotalGrade;
 
-        //    _repository.Update(exam);
-        //    _repository.SaveChanges();
+    //    _repository.Update(exam);
+    //    _repository.SaveChanges();
 
-        //    return true;
-        //}
+    //    return true;
+    //}
 
-        public bool Delete(int id)
-        {
-            var exam = _repository.GetByIdWithTracking(id);
+    public bool Delete(int id)
+    {
+        var exam = _repository.GetByIdWithTracking(id);
 
-            if (exam is null)
-                return false;
+        if (exam is null)
+            return false;
 
-            _repository.Delete(exam);
-            _repository.SaveChanges();
+        _repository.Delete(exam);
+        _repository.SaveChanges();
 
-            return true;
-        }
-
-        public int Min()
-            => _repository.Min(e => e.TotalGrade);
-
-        public int Max()
-            => _repository.Max(e => e.TotalGrade);
-
-        public int Count()
-            => _repository.Count();
-        #endregion
+        return true;
     }
+
+    public int Min()
+        => _repository.Min(e => e.TotalGrade);
+
+    public int Max()
+        => _repository.Max(e => e.TotalGrade);
+
+    public int Count()
+        => _repository.Count();
+    #endregion
+}
 }

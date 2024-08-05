@@ -3,16 +3,18 @@ using AutoMapper.QueryableExtensions;
 
 namespace ExaminationSystem.Helpers
 {
-    public class MapperHelper<TResult>(IMapper mapper) : IMapperHelper<TResult>
+    public static class MapperHelper
     {
-        public TResult Map(object source)
+        public static IMapper Mapper { get; set; }
+
+        public static TResult Map<TResult>(this object source)
         {
-            return mapper.Map<TResult>(source);
+            return Mapper.Map<TResult>(source);
         }
 
-        public IEnumerable<TResult> Map(IQueryable source)
+        public static IEnumerable<TResult> Map<TResult>(this IQueryable source)
         {
-            return source.ProjectTo<TResult>(mapper.ConfigurationProvider);
+            return source.ProjectTo<TResult>(Mapper.ConfigurationProvider);
         }
     }
 }

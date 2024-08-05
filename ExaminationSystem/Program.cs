@@ -1,6 +1,8 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using ExaminationSystem;
+using ExaminationSystem.Helpers;
 using ExaminationSystem.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,9 +20,11 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterModule(new AutofacModule()));
 
-builder.Services.AddAutoMapper(typeof(ExamProfile));
+builder.Services.AddAutoMapper(typeof(ExamProfile), typeof(CourseProfile));
 
 var app = builder.Build();
+
+MapperHelper.Mapper = app.Services.GetService<IMapper>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,32 +1,25 @@
-﻿using ExaminationSystem.Helpers;
+﻿using ExaminationSystem.DTOs.Course;
+using ExaminationSystem.Helpers;
 using ExaminationSystem.Models;
 using ExaminationSystem.Repositories;
-using ExaminationSystem.ViewModels.Course;
 
 namespace ExaminationSystem.Services.Courses
 {
-    public class CourseService : ICourseService
+    public class CourseService(IGenericRepository<Course> _repository) : ICourseService
     {
-        private readonly IGenericRepository<Course> _repository;
+        public IEnumerable<CourseDto> GetAll()
+           => _repository.GetAll().Map<CourseDto>();
 
-        public CourseService(IGenericRepository<Course> repository)
-        {
-            _repository = repository;
-        }
-
-        public IEnumerable<CourseVM> GetAll()
-           => _repository.GetAll().ToViewModel();
-
-        public CourseVM GetById(int id)
+        public CourseDto GetById(int id)
         {
             var course = _repository.GetById(id);
 
-            return course is not null ? course.ToViewModel() : new CourseVM();
+            return course is not null ? course.Map<CourseDto>() : new CourseDto();
         }
 
-        public bool Add(CourseVM viewModel)
+        public bool Add(CreateCourseDto courseDto)
         {
-            var course = viewModel.ToModel();
+            var course = courseDto.Map<Course>();
 
             _repository.Add(course);
             _repository.SaveChanges();
@@ -34,15 +27,15 @@ namespace ExaminationSystem.Services.Courses
             return true;
         }
 
-        public bool Update(int id, CourseVM viewModel)
+        public bool Update(UpdateCourseDto courseDto)
         {
-            var course = _repository.GetByIdWithTracking(id);
+            var course = _repository.GetByIdWithTracking(courseDto.Id);
 
             if (course is null)
                 return false;
 
-            course.Name = viewModel.Name;
-            course.CreditHours = viewModel.CreditHours;
+            course.Name = courseDto.Name;
+            course.CreditHours = courseDto.CreditHours;
 
             _repository.Update(course);
             _repository.SaveChanges();
