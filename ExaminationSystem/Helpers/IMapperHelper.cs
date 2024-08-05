@@ -3,6 +3,6 @@
     public interface IMapperHelper<TResult>
     {
         TResult Map(object source);
-        IEnumerable<TResult> Map(IQueryable<TResult> source);
+        IEnumerable<TResult> Map(IQueryable source);
     }
 }

@@ -10,7 +10,7 @@ namespace ExaminationSystem.Helpers
             return mapper.Map<TResult>(source);
         }
 
-        public IEnumerable<TResult> Map(IQueryable<TResult> source)
+        public IEnumerable<TResult> Map(IQueryable source)
         {
             return source.ProjectTo<TResult>(mapper.ConfigurationProvider);
         }
