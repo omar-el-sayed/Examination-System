@@ -1,22 +1,14 @@
-﻿using ExaminationSystem.Helpers;
-using ExaminationSystem.Models;
+﻿using ExaminationSystem.Models;
 using ExaminationSystem.Repositories;
 using ExaminationSystem.ViewModels.ExamQuestion;
 
 namespace ExaminationSystem.Services.ExamQuestions
 {
-    public class ExamQuestionService : IExamQuestionService
+    public class ExamQuestionService(IGenericRepository<ExamQuestion> _repository) : IExamQuestionService
     {
-        private readonly IGenericRepository<ExamQuestion> _repository;
-
-        public ExamQuestionService(IGenericRepository<ExamQuestion> repository)
-        {
-            _repository = repository;
-        }
-
         public void Add(CreateExamQuestionVM viewModel)
         {
-            _repository.Add(viewModel.ToModel());
+            //_repository.Add(viewModel.ToModel());
 
             _repository.SaveChanges();
         }
@@ -25,7 +17,7 @@ namespace ExaminationSystem.Services.ExamQuestions
         {
             foreach (var viewModel in viewModels)
             {
-                _repository.Add(viewModel.ToModel());
+                //_repository.Add(viewModel.ToModel());
             }
 
             _repository.SaveChanges();

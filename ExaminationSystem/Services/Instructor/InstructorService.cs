@@ -33,7 +33,6 @@ namespace ExaminationSystem.Services.Instructors
         public bool Update(UpdateInstructorDto instructorDto)
         {
             var instructor = repository.GetByIdWithTracking(instructorDto.Id);
-
             if (instructor is null)
                 return false;
 
@@ -50,7 +49,6 @@ namespace ExaminationSystem.Services.Instructors
         public bool Delete(int id)
         {
             var instructor = repository.GetByIdWithTracking(id);
-
             if (instructor is null)
                 return false;
 

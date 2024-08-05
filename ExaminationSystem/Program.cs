@@ -20,7 +20,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterModule(new AutofacModule()));
 
-builder.Services.AddAutoMapper(typeof(ExamProfile), typeof(CourseProfile), typeof(InstructorProfile), typeof(StudentProfile));
+builder.Services.AddAutoMapper(typeof(ExamProfile), typeof(CourseProfile), typeof(InstructorProfile), typeof(StudentProfile), typeof(QuestionProfile));
 
 var app = builder.Build();
 

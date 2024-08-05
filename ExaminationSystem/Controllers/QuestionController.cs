@@ -1,101 +1,49 @@
-﻿using ExaminationSystem.Helpers;
-using ExaminationSystem.Models;
-using ExaminationSystem.Repositories;
+﻿using ExaminationSystem.DTOs.Question;
+using ExaminationSystem.Helpers;
+using ExaminationSystem.Services.Questions;
 using ExaminationSystem.ViewModels.Question;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminationSystem.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class QuestionController : ControllerBase
+    public class QuestionController(IQuestionService _service) : ControllerBase
     {
-        private readonly IGenericRepository<Question> _repository;
-
-        public QuestionController()
-        {
-            //_repository = new GenericRepository<Question>();
-        }
-
-        [HttpGet]
+        [HttpGet("getall")]
         public IEnumerable<QuestionVM> GetAll()
-        {
-            return _repository.GetAll().ToViewModel();
-            //return _repository.GetAll().Select(q => new QuestionVM { Text = q.Text, Grade = q.Grade });
-        }
+            => _service.GetAll().AsQueryable().Map<QuestionVM>();
 
-        [HttpGet]
+        [HttpGet("get")]
         public IEnumerable<QuestionVM> GetByCondition()
-        {
-            return _repository.Get(q => q.Grade <= 20).ToViewModel();
-        }
+            => _service.Get().AsQueryable().Map<QuestionVM>();
 
-        [HttpGet("{id}")]
+        [HttpGet("getbyid/{id}")]
         public QuestionVM GetById(int id)
-        {
-            var question = _repository.GetById(id);
+            => _service.GetById(id).Map<QuestionVM>();
 
-            return question is not null ? question.ToViewModel() : new QuestionVM();
-        }
-
-        [HttpPost]
+        [HttpPost("add")]
         public bool Add(QuestionVM viewModel)
-        {
-            var question = viewModel.ToModel();
+            => _service.Add(viewModel.Map<CreateQuestionDto>());
 
-            _repository.Add(question);
-            _repository.SaveChanges();
+        [HttpPut("update")]
+        public bool Update(UpdateQuestionVM viewModel)
+            => _service.Update(viewModel.Map<UpdateQuestionDto>());
 
-            return true;
-        }
-
-        [HttpPut("{id}")]
-        public bool Update(int id, QuestionVM viewModel)
-        {
-            var question = _repository.GetByIdWithTracking(id);
-
-            if (question is null)
-                return false;
-
-            question.Text = viewModel.Text;
-            question.Grade = viewModel.Grade;
-
-            _repository.Update(question);
-            _repository.SaveChanges();
-
-            return true;
-        }
-
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public bool Delete(int id)
-        {
-            var question = _repository.GetByIdWithTracking(id);
+            => _service.Delete(id);
 
-            if (question is null)
-                return false;
-
-            _repository.Delete(question);
-            _repository.SaveChanges();
-
-            return true;
-        }
-
-        [HttpGet]
+        [HttpGet("min")]
         public int MinGrade()
-        {
-            return _repository.Min(q => q.Grade);
-        }
+            => _service.Min();
 
-        [HttpGet]
+        [HttpGet("max")]
         public int MaxGrade()
-        {
-            return _repository.Max(q => q.Grade);
-        }
+            => _service.Max();
 
-        [HttpGet]
+        [HttpGet("count")]
         public int Count()
-        {
-            return _repository.Count();
-        }
+            => _service.Count();
     }
 }
