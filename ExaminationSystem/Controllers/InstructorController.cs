@@ -1,139 +1,83 @@
-﻿using ExaminationSystem.Helpers;
-using ExaminationSystem.Models;
-using ExaminationSystem.Repositories;
+﻿using ExaminationSystem.DTOs.Instructor;
+using ExaminationSystem.Helpers;
+using ExaminationSystem.Services.Instructors;
 using ExaminationSystem.ViewModels.Instructor;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminationSystem.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class InstructorController : ControllerBase
+    public class InstructorController(IInstructorService service) : ControllerBase
     {
-        private readonly IGenericRepository<Instructor> _repository;
-
-        public InstructorController()
-        {
-            //_repository = new GenericRepository<Instructor>();
-        }
-
-        [HttpGet]
+        [HttpGet("getall")]
         public IEnumerable<InstructorVM> GetAll()
-        {
-            var instructors = _repository.GetAll();
+            => service.GetAll().AsQueryable().Map<InstructorVM>();
+        #region Old
 
-            return instructors.ToViewModel();
+        //ApplicationDbContext context = new ApplicationDbContext();
 
-            #region Old
+        //// deferred execution التنفيذ المؤجل
+        //IQueryable<InstructorVM> query = context.Instructors
+        //    .Select(i => new InstructorVM { FirstName = i.FirstName, LastName = i.LastName });
 
-            //ApplicationDbContext context = new ApplicationDbContext();
+        ////immediate execution التنفيذ الفورى
+        ////var query = context.Instructors
+        ////    .Select(i => new InstructorVM { FirstName = i.FirstName, LastName = i.LastName })
+        ////    .ToList();
 
-            //// deferred execution التنفيذ المؤجل
-            //IQueryable<InstructorVM> query = context.Instructors
-            //    .Select(i => new InstructorVM { FirstName = i.FirstName, LastName = i.LastName });
+        ////immendiate execution
+        ////var query2 = context.Instructors
+        ////     .FirstOrDefault(x => x.Id > 1);
 
-            ////immediate execution التنفيذ الفورى
-            ////var query = context.Instructors
-            ////    .Select(i => new InstructorVM { FirstName = i.FirstName, LastName = i.LastName })
-            ////    .ToList();
+        ////var result = query.ToList(); //immediate execution will fetch all instructors data from DB (10).
 
-            ////immendiate execution
-            ////var query2 = context.Instructors
-            ////     .FirstOrDefault(x => x.Id > 1);
+        //foreach (var instructor in query) //immediate execution will fetch instructors data from DB one by one from SQL buffer.
+        //{
+        //    Debug.WriteLine(instructor.FullName);
+        //}
 
-            ////var result = query.ToList(); //immediate execution will fetch all instructors data from DB (10).
+        //return query.ToList();
 
-            //foreach (var instructor in query) //immediate execution will fetch instructors data from DB one by one from SQL buffer.
-            //{
-            //    Debug.WriteLine(instructor.FullName);
-            //}
+        #endregion
 
-            //return query.ToList();
-
-            #endregion
-        }
-
-        [HttpGet]
+        [HttpGet("get")]
         public IEnumerable<InstructorVM> GetByCondition()
-        {
-            return _repository.Get(i => i.Id < 100).ToViewModel();
-        }
+            => service.Get().AsQueryable().Map<InstructorVM>();
 
-        [HttpGet("{id}")]
+        [HttpGet("getbyid/{id}")]
         public InstructorVM GetById(int id)
-        {
-            var instructor = _repository.GetById(id);
+            => service.GetById(id).Map<InstructorVM>();
+        #region Old
+        //ApplicationDbContext context = new ApplicationDbContext();
+        //return context.Instructors
+        //    .Where(i => i.Id == id)
+        //    .Select(i => new InstructorVM { FirstName = i.FirstName, LastName = i.LastName })
+        //    .FirstOrDefault();
+        #endregion
 
-            return instructor is not null ? instructor.ToViewModel() : new InstructorVM();
-
-            #region Old
-            //ApplicationDbContext context = new ApplicationDbContext();
-            //return context.Instructors
-            //    .Where(i => i.Id == id)
-            //    .Select(i => new InstructorVM { FirstName = i.FirstName, LastName = i.LastName })
-            //    .FirstOrDefault();
-            #endregion
-        }
-
-        [HttpPost]
+        [HttpPost("add")]
         public bool Add(CreateInstructorVM viewModel)
-        {
-            var instructor = viewModel.ToModel();
+            => service.Add(viewModel.Map<CreateInstructorDto>());
 
-            _repository.Add(instructor);
-            _repository.SaveChanges();
+        [HttpPut("update")]
+        public bool Update(UpdateInstructorVM viewModel)
+            => service.Update(viewModel.Map<UpdateInstructorDto>());
 
-            return true;
-        }
-
-        [HttpPut("{id}")]
-        public bool Update(int id, CreateInstructorVM viewModel)
-        {
-            var instructor = _repository.GetByIdWithTracking(id);
-
-            if (instructor is null)
-                return false;
-
-            instructor.FirstName = viewModel.FirstName;
-            instructor.LastName = viewModel.LastName;
-            instructor.Salary = viewModel.Salary;
-
-            _repository.Update(instructor);
-            _repository.SaveChanges();
-
-            return true;
-        }
-
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public bool Delete(int id)
-        {
-            var instructor = _repository.GetByIdWithTracking(id);
+            => service.Delete(id);
 
-            if (instructor is null)
-                return false;
+        [HttpGet("min")]
+        public double MinSalary()
+            => service.Min();
 
-            _repository.Delete(instructor);
-            _repository.SaveChanges();
-
-            return true;
-        }
-
-        [HttpGet]
-        public int MinSalary()
-        {
-            return _repository.Min(i => Convert.ToInt32(i.Salary));
-        }
-
-        [HttpGet]
+        [HttpGet("max")]
         public double MaxSalary()
-        {
-            return _repository.Max(i => Convert.ToInt32(i.Salary));
-        }
+            => service.Max();
 
-        [HttpGet]
+        [HttpGet("count")]
         public int Count()
-        {
-            return _repository.Count();
-        }
+            => service.Count();
     }
 }
