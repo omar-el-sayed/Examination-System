@@ -1,7 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ExaminationSystem;
-using ExaminationSystem.Helpers.Profiles;
+using ExaminationSystem.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
