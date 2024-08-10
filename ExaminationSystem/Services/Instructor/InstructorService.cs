@@ -66,5 +66,10 @@ namespace ExaminationSystem.Services.Instructors
 
         public int Count()
             => repository.Count();
+
+        public void IncreasePoints(int id)
+        {
+
+        }
     }
 }

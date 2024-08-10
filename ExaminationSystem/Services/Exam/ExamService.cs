@@ -11,48 +11,48 @@ namespace ExaminationSystem.Services.Exams
         public IEnumerable<ExamDto> GetAll()
             => _repository.GetAll().Map<ExamDto>();
 
-        //public ExamDto GetById(int id)
-        //{
-        //    var exam = _repository.GetById(id);
+        public ExamDto GetById(int id)
+        {
+            var exam = _repository.GetById(id);
 
-        //    return exam is not null ? exam.ToViewModel() : new ExamVM();
-        //}
+            return exam is not null ? exam.Map<ExamDto>() : new ExamDto();
+        }
 
-        //public bool Add(CreateExamDto examDto)
-        //{
-        //    var exam = _repository.Add(viewModel.ToModel());
-        //    _repository.SaveChanges();
+        public bool Add(CreateExamDto examDto)
+        {
+            var exam = _repository.Add(examDto.Map<Exam>());
+            _repository.SaveChanges();
 
-        //    var examQuestions = new List<CreateExamQuestionVM>();
+            //var examQuestions = new List<CreateExamQuestionVM>();
 
-        //    foreach (var qId in viewModel.QuestionIds)
-        //    {
-        //        examQuestions.Add(new CreateExamQuestionVM
-        //        {
-        //            ExamId = exam.Id,
-        //            QuestionId = qId
-        //        });
-        //    }
+            //foreach (var qId in viewModel.QuestionIds)
+            //{
+            //    examQuestions.Add(new CreateExamQuestionVM
+            //    {
+            //        ExamId = exam.Id,
+            //        QuestionId = qId
+            //    });
+            //}
 
-        //    _examQuestionService.AddRange(examQuestions);
-        //    return true;
-        //}
+            //_examQuestionService.AddRange(examQuestions);
+            return true;
+        }
 
-        //public bool Update(UpdateExamDto examDto)
-        //{
-        //    var exam = _repository.GetByIdWithTracking(examDto.Id);
+        public bool Update(UpdateExamDto examDto)
+        {
+            var exam = _repository.GetByIdWithTracking(examDto.Id);
 
-        //    if (exam is null)
-        //        return false;
+            if (exam is null)
+                return false;
 
-        //    exam.StartDate = viewModel.StartDate;
-        //    exam.TotalGrade = viewModel.TotalGrade;
+            exam.StartDate = examDto.StartDate;
+            exam.TotalGrade = examDto.TotalGrade;
 
-        //    _repository.Update(exam);
-        //    _repository.SaveChanges();
+            _repository.Update(exam);
+            _repository.SaveChanges();
 
-        //    return true;
-        //}
+            return true;
+        }
 
         public bool Delete(int id)
         {

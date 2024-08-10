@@ -13,5 +13,6 @@ namespace ExaminationSystem.Services.Instructors
         double Min();
         double Max();
         int Count();
+        void IncreasePoints(int id);
     }
 }

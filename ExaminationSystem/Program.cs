@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using ExaminationSystem;
 using ExaminationSystem.Helpers;
+using ExaminationSystem.Middlewares;
 using ExaminationSystem.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,7 @@ builder.Services.AddAutoMapper(typeof(ExamProfile), typeof(CourseProfile), typeo
 
 var app = builder.Build();
 
-MapperHelper.Mapper = app.Services.GetService<IMapper>();
+MapperHelper.Mapper = app.Services.GetService<IMapper>()!;
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -32,6 +33,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<GlobalErrorHandlerMiddleware>();
 
 app.UseAuthorization();
 

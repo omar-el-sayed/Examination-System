@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using ExaminationSystem.Data;
+using ExaminationSystem.Mediators.Exam;
 using ExaminationSystem.Repositories;
 using ExaminationSystem.Services.Courses;
 using ExaminationSystem.Services.ExamQuestions;
@@ -22,6 +23,7 @@ namespace ExaminationSystem
             builder.RegisterType<StudentService>().As<IStudentService>().InstancePerLifetimeScope();
             builder.RegisterType<InstructorService>().As<IInstructorService>().InstancePerLifetimeScope();
             builder.RegisterType<QuestionService>().As<IQuestionService>().InstancePerLifetimeScope();
+            builder.RegisterType<ExamMediator>().As<IExamMediator>().InstancePerLifetimeScope();
         }
     }
 }

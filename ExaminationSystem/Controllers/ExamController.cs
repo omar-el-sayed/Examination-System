@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using ExaminationSystem.DTOs.Exam;
+using ExaminationSystem.Helpers;
 using ExaminationSystem.Services.Exams;
+using ExaminationSystem.Services.Instructors;
 using ExaminationSystem.ViewModels.Exam;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,18 +11,9 @@ namespace ExaminationSystem.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class ExamController : ControllerBase
+    public class ExamController(IExamService _service, IInstructorService _instructorService, IMapper _mapper) : ControllerBase
     {
-        private readonly IExamService _service;
-        private readonly IMapper _mapper;
-
-        public ExamController(IExamService service, IMapper mapper)
-        {
-            _service = service;
-            _mapper = mapper;
-        }
-
-        [HttpGet]
+        [HttpGet("getall")]
         public IEnumerable<ExamVM> GetAll()
         {
             //return _mapper.Map<IEnumerable<ExamVM>>(_service.GetAll());
@@ -29,13 +23,19 @@ namespace ExaminationSystem.Controllers
                 .ProjectTo<ExamVM>(_mapper.ConfigurationProvider);
         }
 
-        //[HttpGet("{id}")]
-        //public ExamVM GetById(int id)
-        //    => _service.GetById(id);
+        [HttpGet("{id}")]
+        public ExamVM GetById(int id)
+            => _service.GetById(id).Map<ExamVM>();
 
-        //[HttpPost]
-        //public bool Add(CreateExamVM viewModel)
-        //    => _service.Add(viewModel);
+        [HttpPost("add")]
+        public bool Add(CreateExamVM viewModel)
+        {
+            _service.Add(viewModel.Map<CreateExamDto>());
+
+            _instructorService.IncreasePoints(viewModel.InstructorId);
+
+            return true;
+        }
 
         //[HttpPut("{id}")]
         //public bool Update(int id, CreateExamVM viewModel)
