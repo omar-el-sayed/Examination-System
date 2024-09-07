@@ -73,7 +73,7 @@ namespace ExaminationSystem.Repositories
 
         public void SaveChanges()
         {
-            _context.SaveChanges();
+            _context.SaveChangesAsync();
         }
     }
 }
